@@ -40,8 +40,8 @@ app.use('/bowlmania.json', function(req, res){
 fs.stat(__filename, function(err, stats) { console.log('Last modified', stats.mtime); });
 delete fs;*/
 
-app.listen(9898);
-console.log('Started server on port 9898.');
+app.listen(80);// used 9898 for pony.kulturny.com deployment
+console.log('Started server on port 80.');
 
 var scraper = new nodeio.Job(options, {
 
@@ -52,7 +52,8 @@ var scraper = new nodeio.Job(options, {
     
         var self = this;
         
-        this.getHtml('http://localhost/bowls/espn-passthru.php?type=' + entryType, function (err, $) {
+        //this.getHtml('http://localhost/bowls/espn-passthru.php?type=' + entryType, function (err, $) {
+        this.getHtml('http://pony.kulturny.com/bowls/espn-passthru.php?type=' + entryType, function (err, $) {
         
             if (err) {
             
@@ -104,6 +105,12 @@ var scraper = new nodeio.Job(options, {
 		                }
                         
                         var winLose = $('span', pick).attribs.class;
+
+						if (team == 'MSU') {
+							var hack = 'http://a.espncdn.com/combiner/i?img=/i/teamlogos/ncaa/500/344.png&w=25&h=0&scale=none';
+							var url = $('span img', pick).attribs.src;
+							if (url == hack) team = 'MSST';
+						}
                         
                         // redundant: if (team == '--'/* || !winLose*/) return;
                         
