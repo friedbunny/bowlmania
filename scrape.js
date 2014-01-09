@@ -25,8 +25,6 @@ app.use('/bowlmania.json', function(req, res){
         if (err) {
             console.log('ERROR', err);
         } else {
-            //console.log(output);
-            //console.log('SENT');
             /*res.setHeader("Cache-Control", "no-cache, no-store, must-revalidate");
             res.setHeader("Pragma", "no-cache");
             res.setHeader("Expires", "0");*/
@@ -40,7 +38,7 @@ app.use('/bowlmania.json', function(req, res){
 
 
 var port = process.env.PORT || 5000;
-app.listen(port);// used 9898 for pony.kulturny.com deployment
+app.listen(port);
 
 
 var scraper = new nodeio.Job(options, {
@@ -59,8 +57,6 @@ var scraper = new nodeio.Job(options, {
 	    	case 'straight': var e = 28172; break;
 		}
         
-        //this.getHtml('http://localhost/bowls/espn-passthru.php?type=' + entryType, function (err, $) {
-        //this.getHtml('http://pony.kulturny.com/bowls/espn-passthru.php?type=' + entryType, function (err, $) {
         this.getHtml(url + e, function (err, $) {
         
             if (err) {
@@ -114,6 +110,7 @@ var scraper = new nodeio.Job(options, {
                         
                         var winLose = $('span', pick).attribs.class;
 
+						// There are two teams that ESPN say are 'MSU', check if it's Mississippi State (MSST)
 						if (team == 'MSU') {
 							var hack = 'http://a.espncdn.com/combiner/i?img=/i/teamlogos/ncaa/500/344.png&w=25&h=0&scale=none';
 							var url = $('span img', pick).attribs.src;
@@ -168,87 +165,3 @@ function whoIsThis(data) {
 	}
 
 };
-
-
-/*
-
-        this.getHtml('http://games.espn.go.com/college-bowl-mania/en/m/scoresheet?groupID=' + encodeURIComponent(groupID), function (err, $) {
-        
-            if (err) {
-            
-                console.log("ERROR", err);
-                self.retry();
-                
-            } else {
-            
-                $('table.scoresheet tbody tr').each(function(listing) {
-                    var entryName = $('td.games-left a', listing).first().fulltext;
-                    var player = $('td.games-left a', listing).last().fulltext;
-                    
-                    self.emit(player + ': ' + entryName);
-                    
-                    var pickCount = 0;
-                    var picks = '    ';
-                    $('td.pick', listing).each(function(pick){
-                        pickCount++;
-                        
-                        picks += $('span', pick).fulltext + ' ';
-                        
-                    });
-                    
-                    self.emit(picks);
-                    self.emit('    (' + pickCount + ' picks)');
-                    
-                });
-                
-            }
-            
-        });
-  
-
-
-
-        this.getHtml('http://games.espn.go.com/college-bowl-mania/en/m/entry?entryID=' + encodeURIComponent(entryID), function (err, $) {
-        
-            if (err) {
-            
-                console.log("ERROR", err);
-                self.retry();
-                
-            } else {
-            
-                var pickCount = 0;
-                var picks = '    ';
-            
-                $('table.pickemTable tbody tr').each(function(game) {
-                    var gameTitle = $('td.title', game).fulltext;
-                    var gameUserPick;
-                    var gameTeam1 = $('td.teams span.pickem-teamName', game).first.fulltext;
-                    var gameTeam2 = $('td.teams span.pickem-teamName', game).last.fulltext;
-                    
-                    var gameUserPoints = $('td.points span.entryPoints', game).fulltext;
-                    
-                    if ($('td.teams td.incorrect', game).notNull) {
-                        gameUserPick = $('td.teams td.incorrect', game).fulltext;
-                    } else if ($('td.teams td.correct', game).notNull) {
-                        gameUserPick = $('td.teams td.correct', game).fulltext;
-                    } else {
-                        gameUserPick = "dunno";
-                    }
-                    
-
-                    pickCount++;
-                    
-                    self.emit(gameTitle + ': ' + gameUserPick + ' (' + gameUserPoints + ')');
-                   
-                    
-                });
-                
-                self.emit('    (' + pickCount + ' picks)');
-                
-            }
-            
-        });
-
-        
-*/
