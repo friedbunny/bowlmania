@@ -9,6 +9,7 @@ var bowlmania = {};
 
 app.configure(function(){
     app.use(express.logger());
+    app.use(express.favicon(__dirname + '/favicon.ico', { maxAge: (86400000 * 365) }));
 });
 
 // heroku logging
@@ -36,9 +37,6 @@ app.use('/bowlmania.json', function(req, res){
     
 });
 
-/*var fs = require('fs');
-fs.stat(__filename, function(err, stats) { console.log('Last modified', stats.mtime); });
-delete fs;*/
 
 var port = process.env.PORT || 5000;
 app.listen(port);// used 9898 for pony.kulturny.com deployment
@@ -53,8 +51,16 @@ var scraper = new nodeio.Job(options, {
     
         var self = this;
         
+        var year = 2013;
+        var url = 'http://games.espn.go.com/college-bowl-mania/' + year + '/en/format/ajax/scoresheetSnapshot?groupID=';
+        switch(entryType) {      		
+			case 'confidence': var e = 25569; break;
+	    	case 'straight': var e = 28172; break;
+		}
+        
         //this.getHtml('http://localhost/bowls/espn-passthru.php?type=' + entryType, function (err, $) {
-        this.getHtml('http://pony.kulturny.com/bowls/espn-passthru.php?type=' + entryType, function (err, $) {
+        //this.getHtml('http://pony.kulturny.com/bowls/espn-passthru.php?type=' + entryType, function (err, $) {
+        this.getHtml(url + e, function (err, $) {
         
             if (err) {
             
