@@ -10,6 +10,7 @@ var bowlmania = {};
 app.configure(function(){
     app.use(express.logger());
     app.use(express.favicon(__dirname + '/favicon.ico', { maxAge: (86400000 * 365) }));
+    app.use(express.compress());
 });
 
 // heroku logging
