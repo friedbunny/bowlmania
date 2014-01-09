@@ -3,15 +3,14 @@ var app = express();
 app.set('title', 'ESPN Bowl Mania Scraper');
 app.set('jsonp callback', true);
 
+app.use(express.logger());
+app.use(express.compress());
+app.use(express.favicon(__dirname + '/favicon.ico', { maxAge: (86400000 * 365) }));
+
 var nodeio = require('node.io');
 var options = {timeout: 10, max: 2, benchmark: true};
 var bowlmania = {};
 
-app.configure(function(){
-    app.use(express.logger());
-    app.use(express.favicon(__dirname + '/favicon.ico', { maxAge: (86400000 * 365) }));
-    app.use(express.compress());
-});
 
 // heroku logging
 var logfmt = require("logfmt");
@@ -41,7 +40,7 @@ app.use('/bowlmania.json', function(req, res){
 
 var port = process.env.PORT || 5000;
 app.listen(port);// used 9898 for pony.kulturny.com deployment
-console.log('Started server on port ' + port);
+
 
 var scraper = new nodeio.Job(options, {
 
