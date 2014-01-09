@@ -8,9 +8,7 @@
     "express": "~3.4.7",
     "logfmt": "~0.18.1"
   },
-  "engines": {
-    "npm": "~0.10.20"
-  },
+  "engines": { "node" : "~0.10.20" },
   "devDependencies": {},
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
