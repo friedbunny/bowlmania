@@ -1,1 +1,1 @@
-ESPN Bowl Mania scoring scraper, using node.io for the scraping and Express to return formatted JSON. Deploys to Heroku, see example at: http://bowlmania.kulturny.com
+ESPN Bowl Mania scoring scraper, using node.io for the scraping and Express to return formatted JSON. Deploys to Heroku, see example at: http://bowlmania.kulturny.com/bowlmania.json
