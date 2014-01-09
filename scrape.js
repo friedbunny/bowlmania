@@ -100,12 +100,6 @@ var scraper = new nodeio.Job(options, {
 		                }
                         
                         var winLose = $('span', pick).attribs.class;
-
-						if (team == 'MSU') {
-							var hack = 'http://a.espncdn.com/combiner/i?img=/i/teamlogos/ncaa/500/344.png&w=25&h=0&scale=none';
-							var url = $('span img', pick).attribs.src;
-							if (url == hack) team = 'MSST';
-						}
                         
                         // redundant: if (team == '--'/* || !winLose*/) return;
                         
