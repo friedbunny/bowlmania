@@ -40,8 +40,9 @@ app.use('/bowlmania.json', function(req, res){
 fs.stat(__filename, function(err, stats) { console.log('Last modified', stats.mtime); });
 delete fs;*/
 
-app.listen(80);// used 9898 for pony.kulturny.com deployment
-console.log('Started server on port 80.');
+var port = process.env.PORT || 5000;
+app.listen(port);// used 9898 for pony.kulturny.com deployment
+console.log('Started server on port ' + port);
 
 var scraper = new nodeio.Job(options, {
 
