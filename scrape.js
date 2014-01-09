@@ -6,6 +6,7 @@ app.set('jsonp callback', true);
 app.use(express.logger());
 app.use(express.compress());
 app.use(express.favicon(__dirname + '/favicon.ico', { maxAge: (86400000 * 365) }));
+app.use(express.errorHandler());
 
 var nodeio = require('node.io');
 var options = {timeout: 10, max: 2, benchmark: true};
