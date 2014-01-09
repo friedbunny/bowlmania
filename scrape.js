@@ -11,6 +11,10 @@ app.configure(function(){
     app.use(express.logger());
 });
 
+// heroku logging
+var logfmt = require("logfmt");
+app.use(logfmt.requestLogger());
+
 
 app.use('/bowlmania.json', function(req, res){
 
