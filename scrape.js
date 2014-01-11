@@ -52,10 +52,10 @@ var scraper = new nodeio.Job(options, {
         
         var year = 2013;
         var url = 'http://games.espn.go.com/college-bowl-mania/' + year + '/en/format/ajax/scoresheetSnapshot?groupID=';
-        switch(entryType) {      		
-			case 'confidence': var e = 25569; break;
-	    	case 'straight': var e = 28172; break;
-		}
+        switch(entryType) {             
+            case 'confidence': var e = 25569; break;
+            case 'straight': var e = 28172; break;
+        }
         
         this.getHtml(url + e, function (err, $) {
         
@@ -68,17 +68,17 @@ var scraper = new nodeio.Job(options, {
             
                 $('table.scoresheet tbody tr').each(function(listing) {
 
-					try {
-					
-	                    var entryName = $('td.games-left a', listing).first().fulltext;
-	                    var player = $('td.games-left a', listing).last().fulltext;
-	                    
-	                } catch (err) {
-	                
-	                	// 2013: skip onto the next <tr></tr> if there's no player 
-	                	return false;
-	                	
-	                }
+                    try {
+                    
+                        var entryName = $('td.games-left a', listing).first().fulltext;
+                        var player = $('td.games-left a', listing).last().fulltext;
+                        
+                    } catch (err) {
+                    
+                        // 2013: skip onto the next <tr></tr> if there's no player 
+                        return false;
+                        
+                    }
                     
                     //self.emit(player + ': ' + entryName);
                     
@@ -96,26 +96,26 @@ var scraper = new nodeio.Job(options, {
                 
                     $('td.pick', listing).each(function(pick){
                         
-						try {
-						
-		                    var team = $('span img', pick).attribs.alt;
-	                        var confidencePoints = $('span', pick).text;
-		                    
-		                } catch (err) {
-		                
-		                	// 2013: skip onto the next <td></td> if there's no pick 
-		                	return;
-		                	
-		                }
+                        try {
+                        
+                            var team = $('span img', pick).attribs.alt;
+                            var confidencePoints = $('span', pick).text;
+                            
+                        } catch (err) {
+                        
+                            // 2013: skip onto the next <td></td> if there's no pick 
+                            return;
+                            
+                        }
                         
                         var winLose = $('span', pick).attribs.class;
 
-						// There are two teams that ESPN say are 'MSU', check if it's Mississippi State (MSST)
-						if (team == 'MSU') {
-							var hack = 'http://a.espncdn.com/combiner/i?img=/i/teamlogos/ncaa/500/344.png&w=25&h=0&scale=none';
-							var url = $('span img', pick).attribs.src;
-							if (url == hack) team = 'MSST';
-						}
+                        // There are two teams that ESPN say are 'MSU', check if it's Mississippi State (MSST)
+                        if (team == 'MSU') {
+                            var hack = 'http://a.espncdn.com/combiner/i?img=/i/teamlogos/ncaa/500/344.png&w=25&h=0&scale=none';
+                            var url = $('span img', pick).attribs.src;
+                            if (url == hack) team = 'MSST';
+                        }
                         
                         // redundant: if (team == '--'/* || !winLose*/) return;
                         
@@ -153,15 +153,15 @@ var scraper = new nodeio.Job(options, {
 
 function whoIsThis(data) {
 
-	switch(data) {      		
-		case 'jasonthefool':       return 'jason'; break;
-    	case 'FightingOnInOregon': return 'akiyo'; break;
-    	case 'arjayw':             return 'dad'; break;
-    	case 'Superelf7':          return 'nathan'; break;
-    	case 'Meerazha':           return 'meera'; break;
-    	case 'robins422003':       return 'robin'; break;
+    switch(data) {              
+        case 'jasonthefool':       return 'jason'; break;
+        case 'FightingOnInOregon': return 'akiyo'; break;
+        case 'arjayw':             return 'dad'; break;
+        case 'Superelf7':          return 'nathan'; break;
+        case 'Meerazha':           return 'meera'; break;
+        case 'robins422003':       return 'robin'; break;
 
-		default: return data;
-	}
+        default: return data;
+    }
 
 };
