@@ -37,8 +37,9 @@ app.use('/bowlmania.json', function(req, res){
 });
 
 
-var port = process.env.PORT || process.env.OPENSHIFT_NODEJS_PORT || 5000;
-app.listen(port);
+var port = (process.env.PORT || process.env.OPENSHIFT_NODEJS_PORT) || 5000;
+var host = process.env.OPENSHIFT_NODEJS_IP || 'localhost';
+app.listen(port, host);
 
 
 var scraper = new nodeio.Job(options, {
