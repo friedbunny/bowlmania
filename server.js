@@ -38,7 +38,7 @@ app.use('/bowlmania.json', function(req, res){
 
 
 var port = (process.env.PORT || process.env.OPENSHIFT_NODEJS_PORT) || 5000;
-var host = process.env.OPENSHIFT_NODEJS_IP || 'localhost';
+var host = process.env.OPENSHIFT_NODEJS_IP || null;
 app.listen(port, host, function() { console.log( "Listening on " + host + ":" + port) });
 
 
