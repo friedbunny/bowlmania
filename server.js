@@ -37,7 +37,7 @@ app.use('/bowlmania.json', function(req, res){
 });
 
 
-var port = (process.env.PORT || process.env.OPENSHIFT_NODEJS_PORT) || 5000;
+var port = process.env.PORT || process.env.OPENSHIFT_NODEJS_PORT || 5000;
 app.listen(port);
 
 
