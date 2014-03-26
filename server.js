@@ -1,159 +1,167 @@
-#!/bin/env node
-//  OpenShift sample Node application
 var express = require('express');
-var fs      = require('fs');
+var app = express();
+app.set('title', 'ESPN Bowl Mania Scraper');
+app.set('jsonp callback', true);
+
+app.use(express.logger());
+app.use(express.compress());
+app.use(express.favicon(__dirname + '/favicon.ico', { maxAge: (86400000 * 365) }));
+app.use(express.errorHandler());
+
+var nodeio = require('node.io');
+var options = {timeout: 10, max: 2, benchmark: true};
+var bowlmania = {};
 
 
-/**
- *  Define the sample application.
- */
-var SampleApp = function() {
-
-    //  Scope.
-    var self = this;
+// heroku logging
+var logfmt = require("logfmt");
+app.use(logfmt.requestLogger());
 
 
-    /*  ================================================================  */
-    /*  Helper functions.                                                 */
-    /*  ================================================================  */
+app.use('/bowlmania.json', function(req, res){
 
-    /**
-     *  Set up server IP address and port # using env variables/defaults.
-     */
-    self.setupVariables = function() {
-        //  Set the environment variables we need.
-        self.ipaddress = process.env.OPENSHIFT_NODEJS_IP;
-        self.port      = process.env.OPENSHIFT_NODEJS_PORT || 8080;
-
-        if (typeof self.ipaddress === "undefined") {
-            //  Log errors on OpenShift but continue w/ 127.0.0.1 - this
-            //  allows us to run/test the app locally.
-            console.warn('No OPENSHIFT_NODEJS_IP var, using 127.0.0.1');
-            self.ipaddress = "127.0.0.1";
-        };
-    };
-
-
-    /**
-     *  Populate the cache.
-     */
-    self.populateCache = function() {
-        if (typeof self.zcache === "undefined") {
-            self.zcache = { 'index.html': '' };
+    nodeio.start(scraper, function (err, output) {
+    
+        if (err) {
+            console.log('ERROR', err);
+        } else {
+            /*res.setHeader("Cache-Control", "no-cache, no-store, must-revalidate");
+            res.setHeader("Pragma", "no-cache");
+            res.setHeader("Expires", "0");*/
+            res.setHeader("Cache-Control", "public, max-age=60");// + (10 * 60));
+            
+            res.jsonp(bowlmania);
         }
-
-        //  Local cache for static content.
-        self.zcache['index.html'] = fs.readFileSync('./index.html');
-    };
-
-
-    /**
-     *  Retrieve entry (content) from cache.
-     *  @param {string} key  Key identifying content to retrieve from cache.
-     */
-    self.cache_get = function(key) { return self.zcache[key]; };
+    }, true);
+    
+});
 
 
-    /**
-     *  terminator === the termination handler
-     *  Terminate server on receipt of the specified signal.
-     *  @param {string} sig  Signal to terminate on.
-     */
-    self.terminator = function(sig){
-        if (typeof sig === "string") {
-           console.log('%s: Received %s - terminating sample app ...',
-                       Date(Date.now()), sig);
-           process.exit(1);
+var port = process.env.PORT || 5000;
+app.listen(port);
+
+
+var scraper = new nodeio.Job(options, {
+
+    input: ['confidence', 'straight'],
+    run: function (entryType) {
+    
+        //console.log('JOB:', entryType);
+    
+        var self = this;
+        
+        var year = 2013;
+        var url = 'http://games.espn.go.com/college-bowl-mania/' + year + '/en/format/ajax/scoresheetSnapshot?groupID=';
+        switch(entryType) {             
+            case 'confidence': var e = 25569; break;
+            case 'straight': var e = 28172; break;
         }
-        console.log('%s: Node server stopped.', Date(Date.now()) );
-    };
+        
+        this.getHtml(url + e, function (err, $) {
+        
+            if (err) {
+            
+                console.log("ERROR", err);
+                self.retry();
+                
+            } else {
+            
+                $('table.scoresheet tbody tr').each(function(listing) {
+
+                    try {
+                    
+                        var entryName = $('td.games-left a', listing).first().fulltext;
+                        var player = $('td.games-left a', listing).last().fulltext;
+                        
+                    } catch (err) {
+                    
+                        // 2013: skip onto the next <tr></tr> if there's no player 
+                        return false;
+                        
+                    }
+                    
+                    //self.emit(player + ': ' + entryName);
+                    
+                    var realName = whoIsThis(player);
+                    if (bowlmania[realName] === undefined) bowlmania[realName] = {};
+                            
+                    bowlmania[realName][entryType] = {};
+                    var obj = bowlmania[realName][entryType]; 
+
+                    obj.entryName = entryName;   
 
 
-    /**
-     *  Setup termination handlers (for exit and a list of signals).
-     */
-    self.setupTerminationHandlers = function(){
-        //  Process on exit and signals.
-        process.on('exit', function() { self.terminator(); });
+                    var picks = {};
+                    //var picksEcho = '';
+                
+                    $('td.pick', listing).each(function(pick){
+                        
+                        try {
+                        
+                            var team = $('span img', pick).attribs.alt;
+                            var confidencePoints = $('span', pick).text;
+                            
+                        } catch (err) {
+                        
+                            // 2013: skip onto the next <td></td> if there's no pick 
+                            return;
+                            
+                        }
+                        
+                        var winLose = $('span', pick).attribs.class;
 
-        // Removed 'SIGPIPE' from the list - bugz 852598.
-        ['SIGHUP', 'SIGINT', 'SIGQUIT', 'SIGILL', 'SIGTRAP', 'SIGABRT',
-         'SIGBUS', 'SIGFPE', 'SIGUSR1', 'SIGSEGV', 'SIGUSR2', 'SIGTERM'
-        ].forEach(function(element, index, array) {
-            process.on(element, function() { self.terminator(element); });
+                        // There are two teams that ESPN say are 'MSU', check if it's Mississippi State (MSST)
+                        if (team == 'MSU') {
+                            var hack = 'http://a.espncdn.com/combiner/i?img=/i/teamlogos/ncaa/500/344.png&w=25&h=0&scale=none';
+                            var url = $('span img', pick).attribs.src;
+                            if (url == hack) team = 'MSST';
+                        }
+                        
+                        // redundant: if (team == '--'/* || !winLose*/) return;
+                        
+                        picks[team] = {};
+                        if (entryType == "confidence") picks[team].pts = parseInt(confidencePoints);
+                        picks[team].win = (winLose == 'win') ? 1 : (winLose == 'loss') ? 0 : -1; 
+                        
+                        //picksEcho += team + ' ' + confidencePoints + ' (' + winLose + '), ';
+                        
+                    });
+                    
+                    obj.picks = picks;
+
+                    //self.emit(picksEcho);
+                    
+                });
+                
+                //self.emit(bowlmania);
+                self.skip();
+                
+            }
+            
         });
-    };
+        
+    },
+    complete: function () {
+        
+        //console.log(JSON.stringify(bowlmania));
+        return (JSON.stringify(bowlmania));
+
+    }
+    
+});
 
 
-    /*  ================================================================  */
-    /*  App server functions (main app logic here).                       */
-    /*  ================================================================  */
+function whoIsThis(data) {
 
-    /**
-     *  Create the routing table entries + handlers for the application.
-     */
-    self.createRoutes = function() {
-        self.routes = { };
+    switch(data) {              
+        case 'jasonthefool':       return 'jason'; break;
+        case 'FightingOnInOregon': return 'akiyo'; break;
+        case 'arjayw':             return 'dad'; break;
+        case 'Superelf7':          return 'nathan'; break;
+        case 'Meerazha':           return 'meera'; break;
+        case 'robins422003':       return 'robin'; break;
 
-        self.routes['/asciimo'] = function(req, res) {
-            var link = "http://i.imgur.com/kmbjB.png";
-            res.send("<html><body><img src='" + link + "'></body></html>");
-        };
+        default: return data;
+    }
 
-        self.routes['/'] = function(req, res) {
-            res.setHeader('Content-Type', 'text/html');
-            res.send(self.cache_get('index.html') );
-        };
-    };
-
-
-    /**
-     *  Initialize the server (express) and create the routes and register
-     *  the handlers.
-     */
-    self.initializeServer = function() {
-        self.createRoutes();
-        self.app = express.createServer();
-
-        //  Add handlers for the app (from the routes).
-        for (var r in self.routes) {
-            self.app.get(r, self.routes[r]);
-        }
-    };
-
-
-    /**
-     *  Initializes the sample application.
-     */
-    self.initialize = function() {
-        self.setupVariables();
-        self.populateCache();
-        self.setupTerminationHandlers();
-
-        // Create the express server and routes.
-        self.initializeServer();
-    };
-
-
-    /**
-     *  Start the server (starts up the sample application).
-     */
-    self.start = function() {
-        //  Start the app on the specific interface (and port).
-        self.app.listen(self.port, self.ipaddress, function() {
-            console.log('%s: Node server started on %s:%d ...',
-                        Date(Date.now() ), self.ipaddress, self.port);
-        });
-    };
-
-};   /*  Sample Application.  */
-
-
-
-/**
- *  main():  Main code.
- */
-var zapp = new SampleApp();
-zapp.initialize();
-zapp.start();
-
+};
