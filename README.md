@@ -1,4 +1,4 @@
-ESPN Bowl Mania scoring scraper, using node.io for the scraping and Express to return formatted JSON. Deploys to Heroku or OpenShift.
+[ESPN Bowl Mania](http://games.espn.go.com/college-bowl-mania/) scoring scraper, using node.io for the scraping and Express to return formatted JSON. Deploys to Heroku or OpenShift.
 
 This is used as the basis for http://kulturny.com/bowls/
 
