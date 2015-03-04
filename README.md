@@ -15,7 +15,7 @@ rhc app create bowlmania nodejs-0.10 --from-code=http://github.com/friedbunny/bo
 ####Update
 
 ```shell
-jason@Keaton ~/Desktop $ git clone ssh://53324ab1e0b8cd9dc0000098@bowlmania-kulturny.rhcloud.com/~/git/bowlmania.git/
+jason@Keaton ~/ $ git clone ssh://53324ab1e0b8cd9dc0000098@bowlmania-kulturny.rhcloud.com/~/git/bowlmania.git/
 Cloning into 'bowlmania'...
 remote: Counting objects: 118, done.
 remote: Compressing objects: 100% (66/66), done.
@@ -23,12 +23,12 @@ remote: Total 118 (delta 54), reused 104 (delta 45)
 Receiving objects: 100% (118/118), 33.36 KiB | 0 bytes/s, done.
 Resolving deltas: 100% (54/54), done.
 Checking connectivity... done.
-jason@Keaton ~/Desktop $ cd bowlmania/
-jason@Keaton ~/Desktop/bowlmania $ git remote -v
+jason@Keaton ~/ $ cd bowlmania/
+jason@Keaton ~/bowlmania $ git remote -v
 origin	ssh://53324ab1e0b8cd9dc0000098@bowlmania-kulturny.rhcloud.com/~/git/bowlmania.git/ (fetch)
 origin	ssh://53324ab1e0b8cd9dc0000098@bowlmania-kulturny.rhcloud.com/~/git/bowlmania.git/ (push)
-jason@Keaton ~/Desktop/bowlmania $ git remote add github https://github.com/friedbunny/bowlmania.git
-jason@Keaton ~/Desktop/bowlmania $ git pull github master
+jason@Keaton ~/bowlmania $ git remote add github https://github.com/friedbunny/bowlmania.git
+jason@Keaton ~/bowlmania $ git pull github master
 remote: Counting objects: 6, done.
 remote: Total 6 (delta 0), reused 0 (delta 0), pack-reused 5
 Unpacking objects: 100% (6/6), done.
@@ -40,7 +40,7 @@ Fast-forward
  README.md | 11 ++++++-----
  server.js | 13 ++++++++++---
  2 files changed, 16 insertions(+), 8 deletions(-)
-jason@Keaton ~/Desktop/bowlmania $ git push origin master
+jason@Keaton ~/bowlmania $ git push origin master
 Counting objects: 9, done.
 Delta compression using up to 8 threads.
 Compressing objects: 100% (6/6), done.
