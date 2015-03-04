@@ -20,6 +20,9 @@ app.use(logfmt.requestLogger());
 
 app.use('/bowlmania.json', function(req, res){
 
+    res.header('Access-Control-Allow-Origin', 'http://kulturny.com');
+    res.header('Access-Control-Allow-Methods', 'GET');
+
     nodeio.start(scraper, function (err, output) {
     
         if (err) {
@@ -51,8 +54,9 @@ var scraper = new nodeio.Job(options, {
     
         var self = this;
         
-        var year = 2013;
-        var url = 'http://games.espn.go.com/college-bowl-mania/' + year + '/en/format/ajax/scoresheetSnapshot?groupID=';
+        var year = 2014;
+        //var url = 'http://games.espn.go.com/college-bowl-mania/' + year + '/en/format/ajax/scoresheetSnapshot?groupID=';
+        var url = 'http://games.espn.go.com/college-bowl-mania/' + year + '/en/scoresheet?groupID=';
         switch(entryType) {             
             case 'confidence': var e = 25569; break;
             case 'straight': var e = 28172; break;
@@ -65,7 +69,10 @@ var scraper = new nodeio.Job(options, {
                 console.log("ERROR", err);
                 self.retry();
                 
-            } else {
+            } else {         
+            
+                // TODO: Fix crash if the right DOM elements aren't found
+                //if (!$('table.scoresheet tbody tr')) self.skip();
             
                 $('table.scoresheet tbody tr').each(function(listing) {
 
