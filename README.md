@@ -14,24 +14,24 @@ rhc app create bowlmania nodejs-0.10 --from-code=http://github.com/friedbunny/bo
 
 ####Update
 
-1. Clone the OpenShift repo
+1. Clone the OpenShift repo:
 
   ```git clone ssh://53324ab1e0b8cd9dc0000098@bowlmania-kulturny.rhcloud.com/~/git/bowlmania.git/```
 
-2. Add Github as a remote repo
+2. Add Github as a remote repo:
 
   ```git remote add github https://github.com/friedbunny/bowlmania.git```
 
-3. Pull the new hotness from Github into your local repo
+3. Pull the new hotness from Github into your local repo:
 
   ```git pull github master```
 
-4. Push the changes up to OpenShift
+4. Push the changes up to OpenShift:
 
   ```git push origin master```
 
 
-Full process in action:
+... and the full process in action:
 
 ```shell
 jason@Keaton ~/ $ git clone ssh://53324ab1e0b8cd9dc0000098@bowlmania-kulturny.rhcloud.com/~/git/bowlmania.git/
