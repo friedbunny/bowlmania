@@ -47,18 +47,18 @@ app.listen(port, host, function() { console.log( "Listening on " + host + ":" + 
 
 var scraper = new nodeio.Job(options, {
 
-    input: ['confidence', 'straight'],
+    input: ['confidence'/*, 'straight'*/],
     run: function (entryType) {
     
         //console.log('JOB:', entryType);
     
         var self = this;
         
-        var year = 2014;
+        var year = 2015;
         //var url = 'http://games.espn.go.com/college-bowl-mania/' + year + '/en/format/ajax/scoresheetSnapshot?groupID=';
         var url = 'http://games.espn.go.com/college-bowl-mania/' + year + '/en/scoresheet?groupID=';
         switch(entryType) {             
-            case 'confidence': var e = 25569; break;
+            case 'confidence': var e = (year == 2015) ? 106564 : 25569; break;
             case 'straight': var e = 28172; break;
         }
         
@@ -73,26 +73,27 @@ var scraper = new nodeio.Job(options, {
             
                 // TODO: Fix crash if the right DOM elements aren't found
                 //if (!$('table.scoresheet tbody tr')) self.skip();
-            
+
                 $('table.scoresheet tbody tr').each(function(listing) {
 
                     try {
                     
-                        var entryName = $('td.games-left a', listing).first().fulltext;
-                        var player = $('td.games-left a', listing).last().fulltext;
+                        var entryName = $('td.entry-owner a', listing).first().fulltext;
+                        var player = $('td.entry-owner a', listing).last().fulltext;
                         
                     } catch (err) {
                     
-                        // 2013: skip onto the next <tr></tr> if there's no player 
+                        // 2013: skip onto the next <tr></tr> if there's no player
+                        console.error("No players found");
                         return false;
                         
                     }
-                    
-                    //self.emit(player + ': ' + entryName);
+
+                    //console.log(player + ': ' + entryName);
                     
                     var realName = whoIsThis(player);
                     if (bowlmania[realName] === undefined) bowlmania[realName] = {};
-                            
+
                     bowlmania[realName][entryType] = {};
                     var obj = bowlmania[realName][entryType]; 
 
@@ -106,17 +107,18 @@ var scraper = new nodeio.Job(options, {
                         
                         try {
                         
-                            var team = $('span img', pick).attribs.alt;
+                            var team = $('img', pick).attribs.alt;
                             var confidencePoints = $('span', pick).text;
                             
                         } catch (err) {
                         
-                            // 2013: skip onto the next <td></td> if there's no pick 
+                            // 2013: skip onto the next <td></td> if there's no pick
                             return;
                             
                         }
                         
-                        var winLose = $('span', pick).attribs.class;
+                        // so brittle
+                        var winLose = pick.attribs.class.split(" ")[3];
 
                         // There are two teams that ESPN say are 'MSU', check if it's Mississippi State (MSST)
                         if (team == 'MSU') {
@@ -124,12 +126,10 @@ var scraper = new nodeio.Job(options, {
                             var url = $('span img', pick).attribs.src;
                             if (url == hack) team = 'MSST';
                         }
-                        
-                        // redundant: if (team == '--'/* || !winLose*/) return;
-                        
+
                         picks[team] = {};
                         if (entryType == "confidence") picks[team].pts = parseInt(confidencePoints);
-                        picks[team].win = (winLose == 'win') ? 1 : (winLose == 'loss') ? 0 : -1; 
+                        picks[team].win = (winLose == "win") ? 1 : (winLose == "loss") ? 0 : -1; 
                         
                         //picksEcho += team + ' ' + confidencePoints + ' (' + winLose + '), ';
                         
@@ -137,7 +137,7 @@ var scraper = new nodeio.Job(options, {
                     
                     obj.picks = picks;
 
-                    //self.emit(picksEcho);
+                    //console.log(picksEcho);
                     
                 });
                 
@@ -167,6 +167,7 @@ function whoIsThis(data) {
         case 'arjayw':             return 'dad'; break;
         case 'Superelf7':          return 'nathan'; break;
         case 'Meerazha':           return 'meera'; break;
+        case 'mwray':              return 'meera'; break;
         case 'robins422003':       return 'robin'; break;
 
         default: return data;
