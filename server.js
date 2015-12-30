@@ -122,14 +122,13 @@ var scraper = new nodeio.Job(options, {
 
                         // There are two teams that ESPN say are 'MSU', check if it's Mississippi State (MSST)
                         if (team == 'MSU') {
-                            var hack = 'http://a.espncdn.com/combiner/i?img=/i/teamlogos/ncaa/500/344.png&w=25&h=0&scale=none';
-                            var url = $('span img', pick).attribs.src;
-                            if (url == hack) team = 'MSST';
+                            var url = $('img', pick).attribs.src;
+                            if (url.search(/344\.png/) != -1) team = 'MSST';
                         }
 
                         picks[team] = {};
-                        if (entryType == "confidence") picks[team].pts = parseInt(confidencePoints);
-                        picks[team].win = (winLose == "win") ? 1 : (winLose == "loss") ? 0 : -1; 
+                        if (entryType == 'confidence') picks[team].pts = parseInt(confidencePoints);
+                        picks[team].win = (winLose == 'win') ? 1 : (winLose == 'loss') ? 0 : -1; 
                         
                         //picksEcho += team + ' ' + confidencePoints + ' (' + winLose + '), ';
                         
