@@ -18,7 +18,7 @@ var logfmt = require("logfmt");
 app.use(logfmt.requestLogger());
 
 
-app.use('/bowlmania.json', function(req, res){
+app.use('/bowlmania.json', function(req, res) {
 
     res.header('Access-Control-Allow-Origin', 'http://kulturny.com');
     res.header('Access-Control-Allow-Methods', 'GET');
@@ -103,7 +103,7 @@ var scraper = new nodeio.Job(options, {
                     var picks = {};
                     //var picksEcho = '';
                 
-                    $('td.pick', listing).each(function(pick){
+                    $('td.pick', listing).each(function(pick) {
                         
                         try {
                         
