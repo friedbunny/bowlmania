@@ -58,7 +58,7 @@ var scraper = new nodeio.Job(options, {
         //var url = 'http://games.espn.go.com/college-bowl-mania/' + year + '/en/format/ajax/scoresheetSnapshot?groupID=';
         var url = 'http://games.espn.go.com/college-bowl-mania/' + year + '/en/scoresheet?groupID=';
         switch(entryType) {             
-            case 'confidence': var e = (year == 2015) ? 106564 : 25569; break;
+            case 'confidence': var e = (year >= 2015) ? 106564 : 25569; break;
             case 'straight': var e = 28172; break;
         }
         
