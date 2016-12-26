@@ -63,6 +63,8 @@ var scraper = new nodeio.Job(options, {
             case 'confidence': var e = (year >= 2015) ? 106564 : 25569; break;
             case 'straight': var e = 28172; break;
         }
+
+        console.log("Fetching:", url + e);
         
         this.getHtml(url + e, function (err, $) {
         
