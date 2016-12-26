@@ -103,7 +103,7 @@ var scraper = new nodeio.Job(options, {
                     var picks = {};
                     //var picksEcho = '';
                 
-                    $('td.pick', listing).each(function(pick) {
+                    $('td.scoresheetmatchup', listing).each(function(pick) {
                         
                         try {
                         
