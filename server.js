@@ -11,6 +11,7 @@ app.use(express.errorHandler());
 var nodeio = require('node.io');
 var options = {timeout: 10, max: 2, benchmark: true};
 var bowlmania = {};
+var year;
 
 
 // heroku logging
@@ -22,6 +23,8 @@ app.use('/bowlmania.json', function(req, res) {
 
     res.header('Access-Control-Allow-Origin', 'http://kulturny.com');
     res.header('Access-Control-Allow-Methods', 'GET');
+
+    year = parseInt(req.query.year) || 2016;
 
     nodeio.start(scraper, function (err, output) {
     
@@ -54,7 +57,6 @@ var scraper = new nodeio.Job(options, {
     
         var self = this;
         
-        var year = 2016;
         //var url = 'http://games.espn.go.com/college-bowl-mania/' + year + '/en/format/ajax/scoresheetSnapshot?groupID=';
         var url = 'http://games.espn.go.com/college-bowl-mania/' + year + '/en/scoresheet?groupID=';
         switch(entryType) {             
