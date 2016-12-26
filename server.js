@@ -168,6 +168,7 @@ function whoIsThis(data) {
         case 'arjayw':             return 'dad'; break;
         case 'Superelf7':          return 'nathan'; break;
         case 'Meerazha':
+        case 'meera.3961179':
         case 'mwray':              return 'meera'; break;
         case 'robins422003':       return 'robin'; break;
 
