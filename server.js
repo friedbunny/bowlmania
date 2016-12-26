@@ -118,7 +118,7 @@ var scraper = new nodeio.Job(options, {
                         }
                         
                         // so brittle
-                        var winLose = pick.attribs.class.split(" ")[3];
+                        var winLose = pick.attribs.class.split(" ")[0];
 
                         // There are two teams that ESPN say are 'MSU', check if it's Mississippi State (MSST)
                         if (team == 'MSU') {
