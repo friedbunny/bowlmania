@@ -167,7 +167,7 @@ function whoIsThis(data) {
         case 'FightingOnInOregon': return 'akiyo'; break;
         case 'arjayw':             return 'dad'; break;
         case 'Superelf7':          return 'nathan'; break;
-        case 'Meerazha':           return 'meera'; break;
+        case 'Meerazha':
         case 'mwray':              return 'meera'; break;
         case 'robins422003':       return 'robin'; break;
 
