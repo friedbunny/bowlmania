@@ -74,7 +74,7 @@ var scraper = new nodeio.Job(options, {
                 // TODO: Fix crash if the right DOM elements aren't found
                 //if (!$('table.scoresheet tbody tr')) self.skip();
 
-                $('table.scoresheet tbody tr').each(function(listing) {
+                $('table.type_entries tbody tr').each(function(listing) {
 
                     try {
                     
