@@ -78,8 +78,8 @@ var scraper = new nodeio.Job(options, {
 
                     try {
                     
-                        var entryName = $('td.entry-owner a', listing).first().fulltext;
-                        var player = $('td.entry-owner a', listing).last().fulltext;
+                        var entryName = $('td.entryowner a', listing).first().fulltext;
+                        var player = $('td.entryowner a', listing).last().fulltext;
                         
                     } catch (err) {
                     
