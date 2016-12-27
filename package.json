@@ -1,6 +1,6 @@
 {
   "name": "bowlmania",
-  "version": "0.0.1",
+  "version": "0.2016.0",
   "description": "ESPN Bowl Mania scoring scraper",
   "main": "server.js",
   "dependencies": {
